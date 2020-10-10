@@ -18,12 +18,17 @@ namespace FantasticBits
     {
         static void Main(string[] args) {
 
+            var turnNumber = 1;
+            var teamId = 0;
 
+            GameState currentGameState;
+
+            teamId = int.Parse(Console.ReadLine()); // if 0 you need to score on the right of the map, if 1 you need to score on the left
 
             // game loop
             while (true) {
 
-                var gameState = ParseCurrentGameStateInput();
+                currentGameState = ParseCurrentGameStateInput(turnNumber, teamId);
 
                 for (int i = 0; i < 2; i++) {
 
@@ -38,9 +43,9 @@ namespace FantasticBits
             }
         }
 
-        public static GameState ParseCurrentGameStateInput() {
+        public static GameState ParseCurrentGameStateInput(int turnNumber, int teamId) {
             string[] inputs;
-            int myTeamId = int.Parse(Console.ReadLine()); // if 0 you need to score on the right of the map, if 1 you need to score on the left
+
             inputs = Console.ReadLine().Split(' ');
             int myScore = int.Parse(inputs[0]);
             int myMagic = int.Parse(inputs[1]);
@@ -49,7 +54,7 @@ namespace FantasticBits
             int opponentMagic = int.Parse(inputs[1]);
             int entities = int.Parse(Console.ReadLine()); // number of entities still in game
 
-            var gameState = new GameState(myScore, opponentScore, myMagic, opponentMagic, entities);
+            var gameState = new GameState(teamId, myScore, opponentScore, myMagic, opponentMagic, entities);
 
             for (int i = 0; i < entities; i++) {
                 inputs = Console.ReadLine().Split(' ');

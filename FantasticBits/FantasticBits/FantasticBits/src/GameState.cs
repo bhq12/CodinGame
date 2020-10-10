@@ -29,7 +29,8 @@ namespace FantasticBits.src
 
         public List<Bludger> Bludgers{ get; set; }
 
-        public GameState(int score, int opponentScore, int magic, int opponentMagic, int entityCount) {
+        public GameState(int teamId, int score, int opponentScore, int magic, int opponentMagic, int entityCount) {
+            TeamId = teamId;
             Score = score;
             OpponentScore = opponentScore;
 
@@ -37,6 +38,11 @@ namespace FantasticBits.src
             OpponentMagic = opponentMagic;
 
             EntityCount = entityCount;
+
+            Wizards = new List<Wizard>();
+            OpponentWizards = new List<Wizard>();
+            Snaffles = new List<Snaffle>();
+            Bludgers = new List<Bludger>();
         }
     }
 }
