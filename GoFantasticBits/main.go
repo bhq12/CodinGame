@@ -1,11 +1,94 @@
 package main
-
-import "fmt"
+import ( 
+    "fmt"
+    "math"
+    "os"
+    "strconv"
+)
 
 /**
  * Grab Snaffles and try to throw them through the opponent's goal!
  * Move towards a Snaffle and use your team id to determine where you need to throw it.
  **/
+
+/**
+=====================
+TYPES
+=====================
+ **/
+type GameState struct {
+    // if 0 you need to score on the right of the map, if 1 you need to score on the left
+    TeamId int 
+    Score int
+    OpponentScore int
+    Magic int
+    EntityCount int
+    OpponentMagic string
+    Wizards []Wizard
+    Snaffles []Snaffle
+    Bludgers []Bludger
+}
+
+type Coordinate struct {
+    X int
+    Y int
+}
+
+type EntityProperties struct {
+    Id int
+    X int
+    Y int
+    Radius int
+    XVelocity int
+    YVelocity int
+    State int
+}
+
+type Wizard struct {
+    IsOpponent bool
+    Properties EntityProperties
+}
+
+type Snaffle struct {
+    Properties EntityProperties
+}
+
+type Bludger struct {
+    Properties EntityProperties
+}
+
+/**
+=====================
+LOGIC
+=====================
+ **/
+
+func distance(x1 int, x2 int, y1 int, y2 int) float64 {
+    xDistance := float64(x1) - float64(x2)
+    yDistance := float64(y1) - float64(y1)
+    return math.Sqrt(math.Pow(xDistance, 2) + math.Pow(yDistance, 2))
+}
+
+func findClosestSnaffle(wizard Wizard, snaffles []Snaffle, ignoreIndex int) int {
+    shortestDistance := float64(-1)
+    var closestSnaffleIndex int
+    for index, snaffle := range snaffles {
+        if index == ignoreIndex {
+            continue
+        }
+        distanceToSnaffle := distance(
+            wizard.Properties.X,
+            snaffle.Properties.X,
+            wizard.Properties.Y,
+            snaffle.Properties.Y,
+        )
+        if shortestDistance == -1 || distanceToSnaffle < shortestDistance {
+            shortestDistance = distanceToSnaffle
+            closestSnaffleIndex = index
+        }
+    }
+    return closestSnaffleIndex
+}
 
 func main() {
     // myTeamId: if 0 you need to score on the right of the map, if 1 you need to score on the left
@@ -22,6 +105,11 @@ func main() {
         // entities: number of entities still in game
         var entities int
         fmt.Scan(&entities)
+
+        wizards :=  []Wizard{}
+        opponentWizards := []Wizard{}
+        snaffles := []Snaffle{}
+        bludgers := []Bludger{}
         
         for i := 0; i < entities; i++ {
             // entityId: entity identifier
@@ -35,14 +123,75 @@ func main() {
             var entityType string
             var x, y, vx, vy, state int
             fmt.Scan(&entityId, &entityType, &x, &y, &vx, &vy, &state)
+
+            entityProperties := EntityProperties {
+                Id: entityId,
+                X: x,
+                Y: y,
+                Radius: 1,//Gets introduced later
+                XVelocity: vx,
+                YVelocity: vy,
+                State: state,
+            }
+
+            if entityType == "WIZARD" {
+                newWizard := Wizard{
+                    IsOpponent: false,
+                    Properties: entityProperties,
+                }
+
+                wizards = append(wizards, newWizard)
+            }
+            if entityType == "OPPONENT_WIZARD" {
+                newWizard := Wizard{
+                    IsOpponent: true,
+                    Properties: entityProperties,
+                }
+                opponentWizards = append(opponentWizards, newWizard)
+
+            }
+            if entityType == "SNAFFLE" {
+                newSnaffle := Snaffle{
+                    Properties: entityProperties,
+                }
+                snaffles = append(snaffles, newSnaffle)
+
+            }
+            if entityType == "BLUDGER" {
+                newBludger := Bludger{
+                    Properties: entityProperties,
+                }
+                bludgers = append(bludgers, newBludger)
+            }
         }
+
+        previousClosestSnaffleIndex := -1
         for i := 0; i < 2; i++ {
-            
-            // fmt.Fprintln(os.Stderr, "Debug messages...")
+            wizard  := wizards[i]
+
+            closestSnaffleIndex := findClosestSnaffle(wizard, snaffles, previousClosestSnaffleIndex)
+            closestSnaffle := snaffles[closestSnaffleIndex]
+
+
+            fmt.Fprintln(os.Stderr, "Len of wizards: + ", len(wizards))
             
             // Edit this line to indicate the action for each wizard (0 ≤ thrust ≤ 150, 0 ≤ power ≤ 500)
             // i.e.: "MOVE x y thrust" or "THROW x y power"
-            fmt.Printf("MOVE 8000 3750 100\n")
+            if wizard.Properties.State == 0 {
+                //Not holding snaffle
+                fmt.Printf("MOVE " + strconv.Itoa(closestSnaffle.Properties.X) + " " + strconv.Itoa(closestSnaffle.Properties.Y) +  " 150\n")
+            } else {
+                //Holding snaffle
+
+                if myTeamId == 1 {
+                    fmt.Printf("THROW 0 3750 500\n")
+                } else {
+                    fmt.Printf("THROW 16000 3750 150\n")
+                }
+
+            }
+            previousClosestSnaffleIndex = closestSnaffleIndex
+            
         }
     }
 }
