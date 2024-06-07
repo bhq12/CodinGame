@@ -11,51 +11,6 @@ import (
  * Move towards a Snaffle and use your team id to determine where you need to throw it.
  **/
 
-/**
-=====================
-TYPES
-=====================
- **/
-type GameState struct {
-    // if 0 you need to score on the right of the map, if 1 you need to score on the left
-    TeamId int 
-    Score int
-    OpponentScore int
-    Magic int
-    EntityCount int
-    OpponentMagic string
-    Wizards []Wizard
-    Snaffles []Snaffle
-    Bludgers []Bludger
-}
-
-type Coordinate struct {
-    X int
-    Y int
-}
-
-type EntityProperties struct {
-    Id int
-    X int
-    Y int
-    Radius int
-    XVelocity int
-    YVelocity int
-    State int
-}
-
-type Wizard struct {
-    IsOpponent bool
-    Properties EntityProperties
-}
-
-type Snaffle struct {
-    Properties EntityProperties
-}
-
-type Bludger struct {
-    Properties EntityProperties
-}
 
 /**
 =====================
@@ -186,7 +141,7 @@ func main() {
                 if myTeamId == 1 {
                     fmt.Printf("THROW 0 3750 500\n")
                 } else {
-                    fmt.Printf("THROW 16000 3750 150\n")
+                    fmt.Printf("THROW 16000 3750 500\n")
                 }
 
             }
