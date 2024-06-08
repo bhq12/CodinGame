@@ -129,24 +129,23 @@ func main() {
 
 
             fmt.Fprintln(os.Stderr, "Len of wizards: + ", len(wizards))
-            
             // Edit this line to indicate the action for each wizard (0 ≤ thrust ≤ 150, 0 ≤ power ≤ 500)
             // i.e.: "MOVE x y thrust" or "THROW x y power"
             if wizard.Properties.State == 0 {
                 //Not holding snaffle
-                fmt.Printf("MOVE " + strconv.Itoa(closestSnaffle.Properties.X) + " " + strconv.Itoa(closestSnaffle.Properties.Y) +  " 150\n")
+                fmt.Println("MOVE " + strconv.Itoa(closestSnaffle.Properties.X) + " " + strconv.Itoa(closestSnaffle.Properties.Y) +  " 150")
             } else {
                 //Holding snaffle
 
                 if myTeamId == 1 {
-                    fmt.Printf("THROW 0 3750 500\n")
+                    fmt.Println("THROW 0 3750 500")
                 } else {
-                    fmt.Printf("THROW 16000 3750 500\n")
+                    fmt.Println("THROW 16000 3750 500")
                 }
 
             }
             previousClosestSnaffleIndex = closestSnaffleIndex
-            
+
         }
     }
 }

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rm build.output > /dev/null
+rm main.output > /dev/null
 set -e;
 #Build to detect compilation errors
 go build .;
@@ -17,10 +17,10 @@ gamestate_types=$(tail -n +2 gamestate_types.go);
 main=$(tail -n +8 main.go);
 
 
-echo $package_statement >> build.ouput;
-echo $import_statement >> build.ouput;
-echo $gamestate_types >> build.ouput;
-echo $main >> build.ouput;
+echo "$package_statement" >> main.output;
+echo "$import_statement" >> main.output;
+echo "$gamestate_types" >> main.output;
+echo "$main" >> main.output;
 
-echo $(cat build.output) | pbcopy;
-#rm .output;
+echo "$(cat main.output)" | pbcopy;
+rm main.output;
